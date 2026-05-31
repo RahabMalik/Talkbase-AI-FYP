@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAISON VELOUR — Luxury Ready-to-Wear</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#0A0A0A;
+  --off-black:#111111;
+  --dark-gray:#1C1C1C;
+  --mid-gray:#555;
+  --light-gray:#AAAAAA;
+  --border:#2A2A2A;
+  --white:#F8F8F6;
+  --pure-white:#FFFFFF;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--black);
+  color:var(--white);
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* CUSTOM CURSOR */
+.cursor{
+  position:fixed;width:10px;height:10px;
+  background:var(--white);border-radius:50%;
+  pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:width 0.2s,height 0.2s,background 0.2s;
+  mix-blend-mode:difference;
+}
+.cursor-ring{
+  position:fixed;width:36px;height:36px;
+  border:1px solid rgba(248,248,246,0.5);
+  border-radius:50%;
+  pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.08s linear,width 0.25s,height 0.25s;
+}
+body:has(.product-card:hover) .cursor{width:60px;height:60px}
+body:has(.product-card:hover) .cursor-ring{opacity:0}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.4rem 4rem;
+  background:rgba(10,10,10,0.88);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{
+  font-family:'Playfair Display',serif;
+  font-size:1.35rem;font-weight:400;
+  letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--white);text-decoration:none;
+}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{
+  font-size:0.68rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--light-gray);
+  text-decoration:none;transition:color 0.3s;
+}
+.nav-links a:hover{color:var(--white)}
+.nav-right{display:flex;align-items:center;gap:1.6rem}
+.nav-right button{
+  background:none;border:none;cursor:none;
+  font-family:'DM Sans',sans-serif;
+  font-size:0.68rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--light-gray);
+  transition:color 0.3s;
+}
+.nav-right button:hover{color:var(--white)}
+.bag-btn{
+  border:1px solid var(--border) !important;
+  color:var(--white) !important;
+  padding:0.55rem 1.3rem !important;
+  transition:background 0.3s,color 0.3s !important;
+}
+.bag-btn:hover{background:var(--white) !important;color:var(--black) !important}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1fr;
+  padding-top:5rem;position:relative;
+}
+.hero-left{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:6rem 5rem 6rem 6rem;
+  background:var(--black);
+  position:relative;z-index:1;
+}
+.hero-tag{
+  font-size:0.62rem;letter-spacing:0.4em;
+  text-transform:uppercase;color:var(--light-gray);
+  margin-bottom:2.5rem;
+  display:flex;align-items:center;gap:1rem;
+}
+.hero-tag::before{content:'';display:block;width:40px;height:1px;background:var(--light-gray)}
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(3.2rem,5.5vw,5.2rem);
+  font-weight:400;line-height:1.08;
+  color:var(--white);margin-bottom:2rem;
+}
+.hero-title em{font-style:italic;color:var(--light-gray)}
+.hero-sub{
+  font-size:0.82rem;line-height:1.9;color:var(--mid-gray);
+  max-width:340px;margin-bottom:3.5rem;font-weight:300;
+}
+.hero-actions{display:flex;align-items:center;gap:2rem}
+.btn-primary{
+  font-size:0.68rem;letter-spacing:0.22em;
+  text-transform:uppercase;color:var(--black);
+  background:var(--white);text-decoration:none;
+  padding:0.85rem 2.4rem;
+  border:1px solid var(--white);
+  transition:background 0.3s,color 0.3s;
+  display:inline-block;
+}
+.btn-primary:hover{background:transparent;color:var(--white)}
+.btn-ghost{
+  font-size:0.68rem;letter-spacing:0.22em;
+  text-transform:uppercase;color:var(--light-gray);
+  text-decoration:none;
+  border-bottom:1px solid var(--border);
+  padding-bottom:0.3rem;
+  transition:color 0.3s,border-color 0.3s;
+}
+.btn-ghost:hover{color:var(--white);border-color:var(--white)}
+
+/* HERO IMAGE */
+.hero-right{
+  position:relative;overflow:hidden;
+  background:var(--off-black);
+}
+.hero-img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center top;
+  display:block;filter:grayscale(100%) contrast(1.1);
+  transition:filter 0.8s ease,transform 0.8s ease;
+}
+.hero-img:hover{filter:grayscale(80%) contrast(1.05);transform:scale(1.02)}
+.hero-badge{
+  position:absolute;bottom:3rem;left:3rem;
+  border:1px solid rgba(255,255,255,0.2);
+  padding:1.2rem 1.6rem;
+  background:rgba(10,10,10,0.7);
+  backdrop-filter:blur(8px);
+}
+.hero-badge-label{
+  font-size:0.58rem;letter-spacing:0.3em;
+  text-transform:uppercase;color:var(--light-gray);
+  margin-bottom:0.3rem;
+}
+.hero-badge-value{
+  font-family:'Playfair Display',serif;
+  font-size:1.2rem;font-weight:400;color:var(--white);
+}
+
+/* MARQUEE */
+.marquee{
+  background:var(--white);padding:0.8rem 0;
+  overflow:hidden;white-space:nowrap;
+}
+.marquee-track{
+  display:inline-flex;animation:scroll 30s linear infinite;
+}
+.marquee-item{
+  display:inline-flex;align-items:center;gap:2rem;
+  padding:0 2rem;
+  font-size:0.6rem;letter-spacing:0.28em;
+  text-transform:uppercase;color:var(--black);font-weight:500;
+}
+.m-dot{width:3px;height:3px;border-radius:50%;background:var(--mid-gray);flex-shrink:0}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* PRODUCT SECTION */
+.section{padding:7rem 5rem}
+.s-head{
+  display:flex;align-items:flex-end;
+  justify-content:space-between;
+  margin-bottom:5rem;
+  padding-bottom:1.5rem;
+  border-bottom:1px solid var(--border);
+}
+.s-num{
+  font-size:0.6rem;letter-spacing:0.3em;
+  text-transform:uppercase;color:var(--mid-gray);
+  margin-bottom:0.6rem;
+}
+.s-title{
+  font-family:'Playfair Display',serif;
+  font-size:2.8rem;font-weight:400;line-height:1.1;
+  color:var(--white);
+}
+.s-title em{font-style:italic;color:var(--light-gray)}
+.link-sm{
+  font-size:0.62rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--mid-gray);
+  text-decoration:none;
+  border-bottom:1px solid var(--border);
+  padding-bottom:0.25rem;
+  transition:color 0.3s,border-color 0.3s;
+  white-space:nowrap;
+}
+.link-sm:hover{color:var(--white);border-color:var(--white)}
+
+/* GRID */
+.pgrid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+}
+.pcard{
+  background:var(--black);
+  cursor:none;
+  overflow:hidden;
+  transition:background 0.3s;
+  position:relative;
+}
+.pcard:hover{background:var(--off-black)}
+.pimg{
+  position:relative;
+  aspect-ratio:3/4;overflow:hidden;
+}
+.pimg img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center top;
+  filter:grayscale(100%) contrast(1.05);
+  transition:transform 0.7s ease,filter 0.5s ease;
+  display:block;
+}
+.pcard:hover .pimg img{
+  transform:scale(1.06);
+  filter:grayscale(85%) contrast(1.1);
+}
+.pbadge{
+  position:absolute;top:1rem;left:1rem;z-index:2;
+  font-size:0.55rem;letter-spacing:0.2em;
+  text-transform:uppercase;
+  padding:0.28rem 0.7rem;
+  background:var(--white);color:var(--black);
+  font-weight:500;
+}
+.pbadge.sale{background:var(--black);color:var(--white);border:1px solid var(--white)}
+.pinfo{padding:1.2rem 1.4rem 1.6rem}
+.pcat{
+  font-size:0.58rem;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--mid-gray);
+  margin-bottom:0.4rem;
+}
+.pname{
+  font-family:'Playfair Display',serif;
+  font-size:1rem;font-weight:400;
+  color:var(--white);margin-bottom:0.5rem;line-height:1.3;
+}
+.pprice{
+  font-size:0.82rem;color:var(--light-gray);
+}
+.pprice .old{
+  text-decoration:line-through;
+  color:var(--mid-gray);margin-right:0.5rem;
+  font-size:0.75rem;
+}
+.padd{
+  display:block;width:100%;
+  margin-top:1rem;padding:0.65rem;
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--mid-gray);
+  font-family:'DM Sans',sans-serif;
+  font-size:0.6rem;letter-spacing:0.2em;
+  text-transform:uppercase;cursor:none;
+  transition:background 0.3s,color 0.3s,border-color 0.3s;
+}
+.padd:hover{background:var(--white);color:var(--black);border-color:var(--white)}
+
+/* EDITORIAL */
+.editorial{
+  display:grid;grid-template-columns:1fr 1fr;
+  min-height:600px;
+}
+.ed-img{
+  position:relative;overflow:hidden;
+  background:var(--off-black);
+}
+.ed-img img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  filter:grayscale(100%) contrast(1.1);
+  display:block;transition:transform 0.8s ease;
+}
+.ed-img:hover img{transform:scale(1.04)}
+.ed-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to right,rgba(10,10,10,0.1),transparent);
+}
+.ed-content{
+  background:var(--off-black);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:6rem 5rem;
+  border-left:1px solid var(--border);
+}
+.ed-label{
+  font-size:0.6rem;letter-spacing:0.35em;
+  text-transform:uppercase;color:var(--mid-gray);
+  margin-bottom:2rem;
+}
+.ed-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,3.5vw,3.2rem);
+  font-weight:400;line-height:1.15;
+  color:var(--white);margin-bottom:2rem;
+}
+.ed-title em{font-style:italic}
+.ed-body{
+  font-size:0.82rem;line-height:1.9;
+  color:var(--mid-gray);font-weight:300;
+  max-width:380px;margin-bottom:3rem;
+}
+.ed-stat{
+  display:flex;gap:3rem;margin-bottom:3rem;
+  padding:1.5rem 0;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.ed-stat-n{
+  font-family:'Playfair Display',serif;
+  font-size:2rem;font-weight:400;color:var(--white);
+}
+.ed-stat-l{
+  font-size:0.58rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--mid-gray);
+  margin-top:0.3rem;
+}
+
+/* LOOKBOOK 3-col */
+.lookbook{padding:7rem 5rem;background:var(--off-black)}
+.look-grid{
+  display:grid;
+  grid-template-columns:1fr 1.4fr 1fr;
+  gap:1.5rem;
+  margin-top:4rem;
+  align-items:start;
+}
+.look-item{position:relative;overflow:hidden;cursor:none}
+.look-item img{
+  width:100%;display:block;
+  object-fit:cover;
+  filter:grayscale(100%) contrast(1.08);
+  transition:transform 0.7s ease,filter 0.5s;
+}
+.look-item:nth-child(2) img{margin-top:-40px}
+.look-item:hover img{transform:scale(1.05);filter:grayscale(80%)}
+.look-caption{
+  padding:1rem 0 0;
+  font-size:0.65rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--mid-gray);
+}
+
+/* FEATURES STRIP */
+.features{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--border);
+}
+.feat{
+  padding:3rem 3rem;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:0.8rem;
+}
+.feat:last-child{border-right:none}
+.feat-icon{
+  font-size:1.4rem;margin-bottom:0.5rem;
+  filter:grayscale(1);
+}
+.feat-title{
+  font-family:'Playfair Display',serif;
+  font-size:1rem;font-weight:400;color:var(--white);
+}
+.feat-desc{
+  font-size:0.75rem;line-height:1.7;
+  color:var(--mid-gray);font-weight:300;
+}
+
+/* TESTIMONIALS */
+.testimonials{padding:7rem 5rem}
+.quote-row{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);
+  margin-top:4rem;
+}
+.qcard{
+  background:var(--black);
+  padding:2.5rem;
+}
+.qstars{display:flex;gap:4px;margin-bottom:1.4rem}
+.star{
+  width:9px;height:9px;
+  background:var(--white);
+  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+}
+.qtext{
+  font-family:'Playfair Display',serif;
+  font-size:1rem;font-weight:400;font-style:italic;
+  line-height:1.75;color:var(--white);
+  margin-bottom:1.5rem;
+}
+.qauthor{
+  font-size:0.6rem;letter-spacing:0.2em;
+  text-transform:uppercase;color:var(--mid-gray);
+}
+
+/* NEWSLETTER */
+.newsletter{
+  background:var(--white);
+  padding:6rem 5rem;
+  display:flex;flex-direction:column;
+  align-items:center;text-align:center;
+}
+.nl-label{
+  font-size:0.62rem;letter-spacing:0.35em;
+  text-transform:uppercase;color:var(--mid-gray);
+  margin-bottom:1.5rem;
+}
+.nl-title{
+  font-family:'Playfair Display',serif;
+  font-size:2.5rem;font-weight:400;
+  color:var(--black);margin-bottom:1rem;
+}
+.nl-sub{
+  font-size:0.78rem;color:var(--mid-gray);
+  margin-bottom:3rem;letter-spacing:0.03em;
+}
+.nl-form{display:flex;max-width:460px;width:100%}
+.nl-form input{
+  flex:1;padding:0.9rem 1.4rem;
+  border:1px solid #CCC;border-right:none;
+  background:var(--pure-white);
+  font-family:'DM Sans',sans-serif;
+  font-size:0.8rem;color:var(--black);
+  outline:none;
+}
+.nl-form input::placeholder{color:#AAA}
+.nl-form input:focus{border-color:var(--black)}
+.nl-form button{
+  padding:0.9rem 2rem;
+  background:var(--black);
+  border:1px solid var(--black);
+  color:var(--white);
+  font-family:'DM Sans',sans-serif;
+  font-size:0.62rem;letter-spacing:0.22em;
+  text-transform:uppercase;cursor:none;
+  transition:background 0.3s,color 0.3s;
+  white-space:nowrap;
+}
+.nl-form button:hover{background:#222}
+
+/* FOOTER */
+footer{
+  background:var(--off-black);
+  padding:5rem 5rem 2.5rem;
+  border-top:1px solid var(--border);
+}
+.ft-top{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:4rem;margin-bottom:4rem;
+}
+.ft-logo{
+  font-family:'Playfair Display',serif;
+  font-size:1.6rem;font-weight:400;
+  letter-spacing:0.2em;color:var(--white);
+  margin-bottom:1rem;
+}
+.ft-about{
+  font-size:0.75rem;line-height:1.8;
+  color:var(--mid-gray);max-width:260px;font-weight:300;
+}
+.ft-col-title{
+  font-size:0.6rem;letter-spacing:0.25em;
+  text-transform:uppercase;color:var(--white);
+  margin-bottom:1.4rem;font-weight:500;
+}
+.ft-links{list-style:none;display:flex;flex-direction:column;gap:0.75rem}
+.ft-links a{
+  font-size:0.78rem;color:var(--mid-gray);
+  text-decoration:none;transition:color 0.3s;font-weight:300;
+}
+.ft-links a:hover{color:var(--white)}
+.ft-bottom{
+  display:flex;justify-content:space-between;
+  align-items:center;padding-top:2rem;
+  border-top:1px solid var(--border);
+}
+.ft-copy{
+  font-size:0.6rem;letter-spacing:0.1em;
+  color:var(--mid-gray);
+}
+.ft-socials{display:flex;gap:1.5rem}
+.ft-socials a{
+  font-size:0.6rem;letter-spacing:0.15em;
+  text-transform:uppercase;color:var(--mid-gray);
+  text-decoration:none;transition:color 0.3s;
+}
+.ft-socials a:hover{color:var(--white)}
+
+/* REVEAL ANIM */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.85s ease,transform 0.85s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal-l{opacity:0;transform:translateX(-28px);transition:opacity 0.85s ease,transform 0.85s ease}
+.reveal-l.in{opacity:1;transform:translateX(0)}
+
+/* HERO ANIM */
+.hero-left>*{opacity:0;animation:fup 0.9s ease forwards}
+.hero-left>*:nth-child(1){animation-delay:0.15s}
+.hero-left>*:nth-child(2){animation-delay:0.3s}
+.hero-left>*:nth-child(3){animation-delay:0.45s}
+.hero-left>*:nth-child(4){animation-delay:0.6s}
+@keyframes fup{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="ring"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Maison Velour</a>
+  <ul class="nav-links">
+    <li><a href="#products">Collections</a></li>
+    <li><a href="#editorial">Editorial</a></li>
+    <li><a href="#lookbook">Lookbook</a></li>
+    <li><a href="#">About</a></li>
+  </ul>
+  <div class="nav-right">
+    <button>Search</button>
+    <button>Account</button>
+    <button class="bag-btn" id="bagBtn">Bag (0)</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-tag">Autumn / Winter Collection 2026</p>
+    <h1 class="hero-title">Dressed in<br><em>Quiet</em><br>Luxury.</h1>
+    <p class="hero-sub">Precision-tailored garments composed in the finest wools and silks — each piece made to dissolve into the body's natural line.</p>
+    <div class="hero-actions">
+      <a href="#products" class="btn-primary">Shop Collection</a>
+      <a href="#editorial" class="btn-ghost">Our Story →</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img
+      class="hero-img"
+      src="https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=900"
+      alt="Model in luxury black coat"
+      onerror="this.src='https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=900&auto=format&fit=crop&q=80'"
+    />
+    <div class="hero-badge">
+      <p class="hero-badge-label">New Season</p>
+      <p class="hero-badge-value">A/W 2026</p>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item">New Arrivals <span class="m-dot"></span></span>
+    <span class="marquee-item">Complimentary Shipping over $500 <span class="m-dot"></span></span>
+    <span class="marquee-item">Handcrafted in Italy <span class="m-dot"></span></span>
+    <span class="marquee-item">Sustainable Luxury Fibres <span class="m-dot"></span></span>
+    <span class="marquee-item">30-Day Returns <span class="m-dot"></span></span>
+    <span class="marquee-item">New Arrivals <span class="m-dot"></span></span>
+    <span class="marquee-item">Complimentary Shipping over $500 <span class="m-dot"></span></span>
+    <span class="marquee-item">Handcrafted in Italy <span class="m-dot"></span></span>
+    <span class="marquee-item">Sustainable Luxury Fibres <span class="m-dot"></span></span>
+    <span class="marquee-item">30-Day Returns <span class="m-dot"></span></span>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section class="section" id="products">
+  <div class="s-head reveal">
+    <div>
+      <p class="s-num">01 — Featured Pieces</p>
+      <h2 class="s-title">New <em>Arrivals</em></h2>
+    </div>
+    <a href="#" class="link-sm">View All →</a>
+  </div>
+
+  <div class="pgrid reveal">
+    <div class="pcard">
+      <div class="pimg">
+        <span class="pbadge">New</span>
+        <img
+          src="https://images.pexels.com/photos/2220316/pexels-photo-2220316.jpeg?auto=compress&cs=tinysrgb&w=600"
+          alt="Overcoat"
+          onerror="this.src='https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?w=600&auto=format&fit=crop&q=80'"
+        />
+      </div>
+      <div class="pinfo">
+        <p class="pcat">Outerwear</p>
+        <p class="pname">The Obsidian Overcoat</p>
+        <p class="pprice">$1,890</p>
+        <button class="padd" onclick="addBag()">Add to Bag</button>
+      </div>
+    </div>
+
+    <div class="pcard">
+      <div class="pimg">
+        <img
+          src="https://images.pexels.com/photos/1381554/pexels-photo-1381554.jpeg?auto=compress&cs=tinysrgb&w=600"
+          alt="Silk Blouse"
+          onerror="this.src='https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=600&auto=format&fit=crop&q=80'"
+        />
+      </div>
+      <div class="pinfo">
+        <p class="pcat">Tops</p>
+        <p class="pname">Midnight Silk Blouse</p>
+        <p class="pprice">$640</p>
+        <button class="padd" onclick="addBag()">Add to Bag</button>
+      </div>
+    </div>
+
+    <div class="pcard">
+      <div class="pimg">
+        <span class="pbadge sale">Sale</span>
+        <img
+          src="https://images.pexels.com/photos/2584269/pexels-photo-2584269.jpeg?auto=compress&cs=tinysrgb&w=600"
+          alt="Blazer"
+          onerror="this.src='https://images.unsplash.com/photo-1594938374182-a55e3b56f963?w=600&auto=format&fit=crop&q=80'"
+        />
+      </div>
+      <div class="pinfo">
+        <p class="pcat">Tailoring</p>
+        <p class="pname">Slate Wool Blazer</p>
+        <p class="pprice"><span class="old">$1,240</span>$890</p>
+        <button class="padd" onclick="addBag()">Add to Bag</button>
+      </div>
+    </div>
+
+    <div class="pcard">
+      <div class="pimg">
+        <span class="pbadge">New</span>
+        <img
+          src="https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=600"
+          alt="Dress"
+          onerror="this.src='https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=80'"
+        />
+      </div>
+      <div class="pinfo">
+        <p class="pcat">Dresses</p>
+        <p class="pname">Column Knit Dress</p>
+        <p class="pprice">$980</p>
+        <button class="padd" onclick="addBag()">Add to Bag</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDITORIAL -->
+<section class="editorial reveal-l" id="editorial">
+  <div class="ed-img">
+    <img
+      src="https://images.pexels.com/photos/3622608/pexels-photo-3622608.jpeg?auto=compress&cs=tinysrgb&w=900"
+      alt="Editorial campaign"
+      onerror="this.src='https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=900&auto=format&fit=crop&q=80'"
+    />
+    <div class="ed-overlay"></div>
+  </div>
+  <div class="ed-content">
+    <p class="ed-label">The Story Behind the Cloth</p>
+    <h2 class="ed-title">Woven from<br><em>Silence</em></h2>
+    <div class="ed-stat">
+      <div>
+        <p class="ed-stat-n">1998</p>
+        <p class="ed-stat-l">Founded</p>
+      </div>
+      <div>
+        <p class="ed-stat-n">12</p>
+        <p class="ed-stat-l">Countries</p>
+      </div>
+      <div>
+        <p class="ed-stat-n">100%</p>
+        <p class="ed-stat-l">Traceable</p>
+      </div>
+    </div>
+    <p class="ed-body">In the ateliers of Florence and Lyon, our master weavers spend months perfecting each bolt of fabric. Every thread is chosen not for spectacle, but for how it catches the quiet afternoon light.</p>
+    <a href="#" class="btn-ghost">Read the Full Story →</a>
+  </div>
+</section>
+
+<!-- LOOKBOOK -->
+<section class="lookbook" id="lookbook">
+  <div class="s-head reveal">
+    <div>
+      <p class="s-num">02 — Lookbook</p>
+      <h2 class="s-title">A/W <em>2026</em></h2>
+    </div>
+    <a href="#" class="link-sm">Full Lookbook →</a>
+  </div>
+
+  <div class="look-grid reveal">
+    <div class="look-item">
+      <img
+        src="https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=500&h=700&fit=crop"
+        alt="Look 01"
+        style="height:480px"
+        onerror="this.src='https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&h=700&fit=crop&q=80'"
+      />
+      <p class="look-caption">Look 01 — The Arrival</p>
+    </div>
+    <div class="look-item">
+      <img
+        src="https://images.pexels.com/photos/2220316/pexels-photo-2220316.jpeg?auto=compress&cs=tinysrgb&w=600&h=820&fit=crop"
+        alt="Look 02"
+        style="height:580px"
+        onerror="this.src='https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&h=820&fit=crop&q=80'"
+      />
+      <p class="look-caption">Look 02 — The Architecture</p>
+    </div>
+    <div class="look-item">
+      <img
+        src="https://images.pexels.com/photos/3622608/pexels-photo-3622608.jpeg?auto=compress&cs=tinysrgb&w=500&h=640&fit=crop"
+        alt="Look 03"
+        style="height:420px"
+        onerror="this.src='https://images.unsplash.com/photo-1485462537746-965f33f7f6a7?w=500&h=640&fit=crop&q=80'"
+      />
+      <p class="look-caption">Look 03 — The Evening</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<div class="features reveal">
+  <div class="feat">
+    <div class="feat-icon">✦</div>
+    <p class="feat-title">Free Shipping</p>
+    <p class="feat-desc">Complimentary worldwide delivery on all orders over $500, fully insured.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">◇</div>
+    <p class="feat-title">Crafted in Italy</p>
+    <p class="feat-desc">Every garment is handcrafted by master artisans in our Florentine atelier.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">○</div>
+    <p class="feat-title">30-Day Returns</p>
+    <p class="feat-desc">A generous return window — no questions, no complications, no compromise.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">◈</div>
+    <p class="feat-title">Sustainable Fibres</p>
+    <p class="feat-desc">100% traceable wool and silk sourced from certified ethical farms only.</p>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="s-head reveal" style="border:none;margin-bottom:0">
+    <div style="width:100%;text-align:center">
+      <p class="s-num" style="text-align:center">03 — Reviews</p>
+      <h2 class="s-title">Worn &amp; <em>Loved</em></h2>
+    </div>
+  </div>
+  <div class="quote-row reveal">
+    <div class="qcard">
+      <div class="qstars"><span class="star"></span><span class="star"></span><span class="star"></span><span class="star"></span><span class="star"></span></div>
+      <p class="qtext">"The Obsidian Overcoat is the finest garment I have ever owned. The weight and drape are extraordinary — it moves with you like a second skin."</p>
+      <p class="qauthor">— Isabelle M., Paris</p>
+    </div>
+    <div class="qcard">
+      <div class="qstars"><span class="star"></span><span class="star"></span><span class="star"></span><span class="star"></span><span class="star"></span></div>
+      <p class="qtext">"I bought the silk blouse without expecting to be this impressed. The fabric is softer than anything I've touched before. Truly impeccable."</p>
+      <p class="qauthor">— Noor A., Dubai</p>
+    </div>
+    <div class="qcard">
+      <div class="qstars"><span class="star"></span><span class="star"></span><span class="star"></span><span class="star"></span><span class="star"></span></div>
+      <p class="qtext">"Maison Velour understands restraint. Every piece is effortless — nothing is trying too hard. It's rare to find a brand this deliberately understated."</p>
+      <p class="qauthor">— Clara H., Milan</p>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter">
+  <p class="nl-label">Stay in the conversation</p>
+  <h2 class="nl-title">Join the Inner Circle</h2>
+  <p class="nl-sub">Exclusive access to new arrivals, private sales, and stories behind the cloth.</p>
+  <div class="nl-form">
+    <input type="email" placeholder="Your email address" id="nlInput"/>
+    <button type="button" id="nlBtn">Subscribe</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-top">
+    <div>
+      <p class="ft-logo">Maison Velour</p>
+      <p class="ft-about">Luxury ready-to-wear handcrafted in the ateliers of Florence and Lyon since 1998. Quiet. Precise. Enduring.</p>
+    </div>
+    <div>
+      <p class="ft-col-title">Collections</p>
+      <ul class="ft-links">
+        <li><a href="#">Women's New In</a></li>
+        <li><a href="#">Men's New In</a></li>
+        <li><a href="#">Knitwear</a></li>
+        <li><a href="#">Tailoring</a></li>
+        <li><a href="#">Accessories</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="ft-col-title">Information</p>
+      <ul class="ft-links">
+        <li><a href="#">Our Story</a></li>
+        <li><a href="#">Craftsmanship</a></li>
+        <li><a href="#">Sustainability</a></li>
+        <li><a href="#">Lookbook</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="ft-col-title">Customer Care</p>
+      <ul class="ft-links">
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Shipping & Returns</a></li>
+        <li><a href="#">Size Guide</a></li>
+        <li><a href="#">Care Instructions</a></li>
+        <li><a href="#">FAQs</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <p class="ft-copy">© 2026 Maison Velour. All rights reserved.</p>
+    <div class="ft-socials">
+      <a href="#">Instagram</a>
+      <a href="#">Pinterest</a>
+      <a href="#">TikTok</a>
+      <a href="#">Newsletter</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Custom cursor
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('ring');
+let rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';
+  rx+=(e.clientX-rx)*0.12;ry+=(e.clientY-ry)*0.12;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';
+});
+function animRing(){
+  const x=parseFloat(ring.style.left)||0;
+  const y=parseFloat(ring.style.top)||0;
+  const mx=parseFloat(cur.style.left)||0;
+  const my=parseFloat(cur.style.top)||0;
+  ring.style.left=(x+(mx-x)*0.12)+'px';
+  ring.style.top=(y+(my-y)*0.12)+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+
+// Scroll reveals
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')});
+},{threshold:0.1});
+document.querySelectorAll('.reveal,.reveal-l').forEach(el=>obs.observe(el));
+
+// Bag counter
+let count=0;
+function addBag(){
+  count++;
+  const b=document.getElementById('bagBtn');
+  b.textContent=`Bag (${count})`;
+  b.style.borderColor='#fff';
+  b.style.color='#fff';
+  b.style.background='rgba(255,255,255,0.15)';
+  setTimeout(()=>{b.style.background='';},600);
+}
+
+// Newsletter
+document.getElementById('nlBtn').addEventListener('click',function(){
+  const inp=document.getElementById('nlInput');
+  if(inp.value.includes('@')){
+    this.textContent='Subscribed ✓';
+    this.style.background='#1a1a1a';
+    inp.value='';inp.placeholder='Welcome to the inner circle.';
+  }
+});
+</script>
+<!-- TalkBase AI Chatbot -->
+<script
+  src="http://localhost:3000/widget.js"
+  data-api-key="6024b968-9413-441f-a07f-b76dec22dde8"
+  data-color="#0F172A"
+  data-title="Support Team"
+></script>
+</body>
+</html>
