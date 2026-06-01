@@ -5,18 +5,14 @@ require("dotenv").config();
 const connectDB = require("./lib/mongodb");
 const app = express();
 
-/* ── CORS — locked to allowed origins only ───────────────────────────────── */
+/* ── CORS — locked to allowed origins only ───────────────────────────────── 
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "http://localhost:3000")
-  .split(",").map(o => o.trim());
+  .split(",").map(o => o.trim()); */
 
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (origin && ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type,Authorization,x-api-key");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
   if (req.method === "OPTIONS") return res.status(200).end();
   next();
 });
