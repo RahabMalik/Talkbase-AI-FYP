@@ -29,6 +29,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^8.0.7",
     "pdf-parse": "^2.4.5",
+    "resend": "^6.12.4",
     "streamifier": "^0.1.1",
     "uuid": "^14.0.0"
   },
