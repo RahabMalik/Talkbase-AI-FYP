@@ -3,9 +3,9 @@
  *
  * FIXES APPLIED
  * ─────────────
- * 1. SMTP credentials validation — forgot-password now returns a clear 503
- *    instead of crashing nodemailer when SMTP_USER / SMTP_PASS are placeholders.
- *    The reset token is cleared if the email actually fails to send.
+ * 1. Replaced nodemailer/SMTP with Resend HTTP API — works on Render free tier
+ *    (Render blocks outbound SMTP ports 25/465/587).
+ *    Requires RESEND_API_KEY in your .env / Render environment variables.
  *
  * 2. Real avatar upload via Cloudinary — POST /api/auth/me/avatar accepts a
  *    multipart file, uploads it to Cloudinary, stores the secure_url in the
@@ -18,7 +18,7 @@ const bcrypt     = require("bcrypt");
 const jwt        = require("jsonwebtoken");
 const { v4: uuidv4 } = require("uuid");
 const crypto     = require("crypto");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 const multer     = require("multer");
 const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier");
@@ -28,6 +28,9 @@ const Business       = require("../models/Business");
 const authMiddleware = require("../middleware/auth");
 
 const router = express.Router();
+
+/* ── Resend configuration ─────────────────────────────────────────────────── */
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /* ── Cloudinary configuration ─────────────────────────────────────────────── */
 cloudinary.config({
@@ -47,30 +50,6 @@ const upload = multer({
     cb(null, true);
   },
 });
-
-/* ── SMTP sanity-check helper ─────────────────────────────────────────────── */
-const SMTP_PLACEHOLDERS = [
-  "your-email@gmail.com",
-  "your-gmail-app-password",
-  "",
-  undefined,
-  null,
-];
-
-function smtpConfigured() {
-  return (
-    !SMTP_PLACEHOLDERS.includes(process.env.SMTP_USER) &&
-    !SMTP_PLACEHOLDERS.includes(process.env.SMTP_PASS)
-  );
-}
-
-if (!smtpConfigured()) {
-  console.warn(
-    "\n[AUTH] ⚠️  SMTP_USER / SMTP_PASS are not configured.\n" +
-    "       Forgot-password emails will NOT be sent until you set real\n" +
-    "       values in your .env file (SMTP_USER, SMTP_PASS).\n"
-  );
-}
 
 /* ── SIGNUP ───────────────────────────────────────────────────────────────── */
 router.post("/signup", async (req, res) => {
@@ -187,13 +166,6 @@ router.put("/me", authMiddleware, async (req, res) => {
 });
 
 /* ── POST /api/auth/me/avatar  (real Cloudinary upload) ──────────────────── */
-/**
- * Accepts multipart/form-data with a single field named "avatar".
- * Streams the file buffer directly to Cloudinary (no temp files).
- * Stores the returned secure_url in User.avatarUrl and returns it.
- *
- * Required .env vars: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
- */
 router.post(
   "/me/avatar",
   authMiddleware,
@@ -203,7 +175,6 @@ router.post(
       return res.status(400).json({ message: "No image file provided" });
     }
 
-    // Check Cloudinary is configured
     if (
       !process.env.CLOUDINARY_CLOUD_NAME ||
       !process.env.CLOUDINARY_API_KEY    ||
@@ -218,7 +189,6 @@ router.post(
     }
 
     try {
-      // Stream buffer → Cloudinary (no disk I/O)
       const uploadResult = await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
           {
@@ -235,7 +205,6 @@ router.post(
         streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
       });
 
-      // Persist the URL
       const user = await User.findById(req.user.userId);
       if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -259,13 +228,11 @@ router.delete("/me/avatar", authMiddleware, async (req, res) => {
     const user = await User.findById(req.user.userId);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Remove from Cloudinary if we have a stored URL
     if (user.avatarUrl) {
       try {
         await cloudinary.uploader.destroy(`talkbase/avatars/user_${req.user.userId}`);
       } catch (cdnErr) {
         console.warn("[AVATAR DELETE CDN]", cdnErr.message);
-        // Non-fatal — continue to clear the DB field
       }
     }
 
@@ -281,17 +248,6 @@ router.delete("/me/avatar", authMiddleware, async (req, res) => {
 
 /* ── FORGOT PASSWORD ──────────────────────────────────────────────────────── */
 router.post("/forgot-password", async (req, res) => {
-  if (!smtpConfigured()) {
-    console.error(
-      "[FORGOT PASSWORD] SMTP credentials are not configured. " +
-      "Set SMTP_USER and SMTP_PASS in your .env file."
-    );
-    return res.status(503).json({
-      message:
-        "Email service is not configured. Please contact the site administrator.",
-    });
-  }
-
   try {
     const { email } = req.body;
 
@@ -304,23 +260,13 @@ router.post("/forgot-password", async (req, res) => {
     user.resetTokenExpiry = Date.now() + 1000 * 60 * 15; // 15 min
     await user.save();
 
-   const transporter = nodemailer.createTransport({
-     host: "smtp.gmail.com",
-     port: 587,
-     secure: false,
-     auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
     const resetLink = `${
       process.env.FRONTEND_URL || "http://localhost:3000"
     }/reset-password?token=${token}`;
 
     try {
-      await transporter.sendMail({
-        from:    process.env.SMTP_USER,
+      await resend.emails.send({
+        from:    "TalkBase <onboarding@resend.dev>", // swap for your domain once verified
         to:      email,
         subject: "Password Reset",
         html: `
@@ -336,8 +282,7 @@ router.post("/forgot-password", async (req, res) => {
       user.resetTokenExpiry = undefined;
       await user.save();
       return res.status(502).json({
-        message:
-          "Failed to send reset email. Please try again later or contact support.",
+        message: "Failed to send reset email. Please try again later or contact support.",
       });
     }
 

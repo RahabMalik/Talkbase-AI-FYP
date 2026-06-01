@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const connectDB = require("./lib/mongodb");
 const app = express();
+app.set('trust proxy', 1);
 
 /* ── CORS — locked to allowed origins only ───────────────────────────────── 
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "http://localhost:3000")
